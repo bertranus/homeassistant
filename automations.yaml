@@ -1,0 +1,62 @@
+- alias: Чистим Кузю
+  trigger:
+    platform: event
+    event_type: yandex_intent
+    event_data:
+      text: Покажи сообщение
+  action:
+    service: persistent_notification.create
+    data:
+      title: Сообщение со станции
+      message: Один момент
+  id: bcf511631bad4c8ea1732e7ed469231f
+- alias: Начинаем зональную уборку
+  trigger:
+  - entity_id: input_boolean.start_vacuum_clean_zone
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data: {}
+    entity_id: script.clean_xiaomi
+    service: script.turn_on
+  id: 9d7a18208d2a405894713c991f1f3c0c
+- alias: Сброс кнопок зональной уборки в Off
+  trigger:
+  - entity_id: vacuum.xiaomi_vacuum_cleaner
+    platform: state
+    to: returning
+  action:
+  - data: {}
+    entity_id: input_boolean.kitchen_vacuum
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.artem_vacuum
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.koridor_vacuum
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.lera_vacuum
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.spalnya_vacuum
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.zal_vacuum
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.start_vacuum_clean_zone
+    service: input_boolean.turn_off
+  id: f28d2ae75e6d4bc08e2a712eb8615524
+- id: '1615845693293'
+  alias: Рестарт сервера
+  description: ''
+  trigger:
+  - platform: time
+    at: 02:01
+  condition: []
+  action:
+  - service: homeassistant.restart
+    data: {}
+  mode: single

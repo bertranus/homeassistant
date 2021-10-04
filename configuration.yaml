@@ -1,0 +1,151 @@
+lovelace:
+  mode: yaml
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+#tts:
+#  - platform: google_translate
+#conversation:
+#  intents:
+#    media_player.yandex_station_mini: [.+]
+
+weather:
+  - platform: gismeteo
+    mode: daily
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
+switch: !include switches.yaml
+
+mqtt:
+  broker: broker.hivemq.com
+  port: 1883
+  client_id: home-assistant-1
+  keepalive: 60
+  username: homeassistant
+  password: !secret mqtt_password
+  protocol: 3.1
+  birth_message:
+    topic: "NodeMCU-bert/hass1/LWT"
+    payload: "Online"
+    qos: 1
+    retain: true
+  will_message:
+    topic: "NodeMCU-bert/hass1/LWT"
+    payload: "Offline"
+    qos: 1
+    retain: true
+
+yandex_smart_home:
+
+yandex_station:
+  username: !secret yandex_user
+  password: !secret yandex_password
+  recognition_lang: ru-RU
+  intents:
+    Отправь Кузю к мусорке: Будет сделано   
+
+cover:
+  - platform: mqtt
+    name: "Blind"
+    command_topic: "d1-pro-b/command"
+    state_topic: "d1-pro-b_6/upDownRelay/State"
+    availability_topic: "d1-pro-b_6/status/LWT"
+    payload_open: 100
+    payload_close: 101
+    payload_stop: 102
+    state_open: 0
+#    state_opening: 0
+    state_closed: 1
+#    state_closing: 1
+    payload_available: "Connected"
+    payload_not_available: "Offline"
+
+vacuum:
+    platform: xiaomi_miio
+    host: !secret vacuum_host
+    token: !secret vacuum_token
+
+#vacuum:
+#  - platform: miio2
+#    host: !secret vacuum_host
+#    token: !secret vacuum_token
+#    name: Mi hihi
+
+python_script:
+
+input_boolean:
+   kitchen_vacuum:
+    name: "Кухня"
+    initial: off
+    icon: mdi:cellphone-wireless
+   children_vacuum:
+    name: "Детская"
+    initial: off
+    icon: mdi:cellphone-wireless
+   hall_vacuum:
+    name: "Прихожая"
+    initial: off
+    icon: mdi:cellphone-wireless
+   store_vacuum:
+    name: "Кладовка"
+    initial: off
+    icon: mdi:cellphone-wireless
+   toilet_vacuum:
+    name: "Туалет"
+    initial: off
+    icon: mdi:cellphone-wireless
+   bedroom_vacuum:
+    name: "Спальня"
+    initial: off
+    icon: mdi:cellphone-wireless
+   smallroom_vacuum:
+    name: "Маленькая комната"
+    initial: off
+    icon: mdi:cellphone-wireless
+   bathroom_vacuum:
+    name: "Ванная"
+    initial: off
+    icon: mdi:cellphone-wireless
+   start_vacuum_clean_zone:
+    name: "Старт"
+    initial: off
+
+fan:
+  - platform: mqtt
+    name: relay_t
+    command_topic: "NodeMCU-bert/command"
+    state_topic: "NodeMCU-bert/command"
+    payload_on: "101"
+    payload_off: "100"
+    qos: 1
+    retain: true
+  - platform: mqtt
+    name: relay_v
+    command_topic: "D1-mini-v/command"
+    state_topic: "D1-mini-v/command"
+    payload_on: "101"
+    payload_off: "100"
+    qos: 1
+    retain: true
+
+#wake_on_lan: # enables `wake_on_lan` domain
+#webostv:
+#  host: !secret vacuum_host
+#  turn_on_action:
+#    service: wake_on_lan.send_magic_packet
+#    data:
+#      mac: "3c:cd:93:d1:06:2c"
+#  customize:
+#    sources:
+#      - livetv
+#      - youtube
+#      - hdmi1
+#      - photovideo
+#      - Plex
+  

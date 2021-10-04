@@ -1,0 +1,227 @@
+- platform: mqtt
+  name: "temperature"
+  state_topic: "D1-mini-v/SI7021/Temperature"
+  unit_of_measurement: "°C"
+  device_class: temperature
+
+- platform: mqtt
+  name: "temperature_balcon"
+  state_topic: "d1-pro-b_6/weather/Temperature"
+  unit_of_measurement: "°C"
+  device_class: temperature
+
+# Влажность
+- platform: mqtt
+  name: "humidity"
+  state_topic: "D1-mini-v/SI7021/Humidity"
+  unit_of_measurement: "%"
+  device_class: humidity
+
+- platform: mqtt
+  name: "humidity_balcon"
+  state_topic: "d1-pro-b_6/weather/Humidity"
+  unit_of_measurement: "%"
+  device_class: humidity
+
+#- platform: mqtt
+#  name: "airQuality"
+#  state_topic: "NodeMCU-bert/Air/Quality"
+#  unit_of_measurement: "ppm"
+
+- platform: mqtt
+  name: "pressure"
+  state_topic: "d1-pro-b_6/weather/Pressure"
+  unit_of_measurement: "hPa"
+  device_class: pressure
+
+- platform: mqtt
+  name: "lightness"
+  state_topic: "d1-pro-b_6/lux/Lux"
+  unit_of_measurement: "Lx"
+  device_class: illuminance
+
+- platform: gismeteo
+  monitored_conditions:
+    - weather
+    - temperature
+    - humidity
+
+- platform: template
+  sensors:
+    vacuum_cleaner_error_sensor:
+      friendly_name: Vacuum Cleaner Error Sensor
+      value_template: >-
+        {% if states.vacuum.xiaomi_vacuum_cleaner.attributes.error is defined %}
+          {{states.vacuum.xiaomi_vacuum_cleaner.attributes.error}}
+        {% else %}
+          No Error
+        {% endif %}
+
+- platform: template
+  sensors:
+    vacuum_cleaner_status_sensor:
+      friendly_name: Vacuum Cleaner Status Sensor
+      value_template: >-
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}
+
+- platform: template
+  sensors:
+    vacuum_cleaner_battery_level:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.battery_level }}
+      friendly_name: Battery Level
+      unit_of_measurement: '%'
+
+    vacuum_cleaner_cleaned_area:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.cleaned_area }}
+      friendly_name: Cleaned Area
+      unit_of_measurement: 'm²'
+
+    vacuum_cleaner_status:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}
+      friendly_name: Status
+
+    vacuum_cleaner_cleaning_time:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.cleaning_time }}
+      friendly_name: Cleaning Time
+      unit_of_measurement: 'min'
+
+    vacuum_cleaner_main_brush_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.main_brush_left }}
+      friendly_name: Main Brush Left
+      unit_of_measurement: 'Hrs'
+
+    vacuum_cleaner_side_brush_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.side_brush_left }}
+      friendly_name: Side Brush Left
+      unit_of_measurement: 'Hrs'
+
+    vacuum_cleaner_filter_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.filter_left }}
+      friendly_name: Filter Left
+      unit_of_measurement: 'Hrs'
+
+- platform: template
+  sensors:
+    vacuum_status:
+      friendly_name: "Vacuum - Status"
+      value_template: "Status: {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}"
+
+- platform: template
+  sensors:
+    vacuum_battery:
+      friendly_name: "Vacuum - Battery"
+      value_template: "Battery: {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.battery_level }}"
+      device_class: battery
+      unit_of_measurement: '%'
+
+#/config/includes/sensor/mirobot.yaml
+- platform: template
+  sensors:
+    vacuum_cleaner_error_sensor:
+      friendly_name: Vacuum Cleaner Error Sensor
+      value_template: >-
+        {% if states.vacuum.xiaomi_vacuum_cleaner.attributes.error is defined %}
+          {{states.vacuum.xiaomi_vacuum_cleaner.attributes.error}}
+        {% else %}
+          No Error
+        {% endif %}
+
+- platform: template
+  sensors:
+    vacuum_cleaner_status_sensor:
+      friendly_name: Vacuum Cleaner Status Sensor
+      value_template: >-
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}
+
+- platform: template
+  sensors:
+    vacuum_cleaner_cleaning_count:
+      friendly_name: Vacuum Cleaner Сleaning count
+      value_template: >-
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.cleaning_count }}
+
+- platform: template
+  sensors:
+    vacuum_cleaner_battery_level:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.battery_level }}
+      friendly_name: Battery Level
+      unit_of_measurement: '%'
+
+    vacuum_cleaner_cleaned_area:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.cleaned_area }}
+      friendly_name: Cleaned Area
+      unit_of_measurement: 'm²'
+
+    vacuum_cleaner_status:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}
+      friendly_name: Status
+
+    vacuum_cleaner_cleaning_time:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.cleaning_time }}
+      friendly_name: Cleaning Time
+      unit_of_measurement: 'мин'
+
+    vacuum_cleaner_main_brush_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.main_brush_left }}
+      friendly_name: Main Brush Left
+      unit_of_measurement: 'ч'
+
+    vacuum_cleaner_main_brush_left_percet:
+      value_template: >
+        {{ ((states.vacuum.xiaomi_vacuum_cleaner.attributes.main_brush_left) / 300 * 100) | int }}
+      friendly_name: Ведущая щетка
+      unit_of_measurement: '%'
+
+    vacuum_cleaner_side_brush_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.side_brush_left }}
+      friendly_name: Side Brush Left
+      unit_of_measurement: 'ч'
+
+    vacuum_cleaner_side_brush_left_percet:
+      value_template: >
+        {{ ((states.vacuum.xiaomi_vacuum_cleaner.attributes.side_brush_left) / 200 * 100) | int  }}
+      friendly_name: Боковая щетка
+      unit_of_measurement: '%'
+
+    vacuum_cleaner_filter_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.filter_left }}
+      friendly_name: Filter Left
+      unit_of_measurement: 'ч'
+
+    vacuum_cleaner_filter_left_percet:
+      value_template: >
+        {{ ((states.vacuum.xiaomi_vacuum_cleaner.attributes.filter_left) / 150 * 100) | int }}
+      friendly_name: Сетчатый фильтр
+      unit_of_measurement: '%'
+
+    vacuum_cleaner_sensor_dirty_left:
+      value_template: >
+        {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.sensor_dirty_left }}
+      friendly_name: Sensor
+      unit_of_measurement: 'ч'
+
+    vacuum_cleaner_sensor_dirty_left_percet:
+      value_template: >
+        {{ ((states.vacuum.xiaomi_vacuum_cleaner.attributes.sensor_dirty_left) / 30 * 100) | int  }}
+      friendly_name: Датчики
+      unit_of_measurement: '%'
+
+- platform: template
+  sensors:
+    vacuum_status:
+      friendly_name: "Vacuum - Status"
+      value_template: "Status: {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}"

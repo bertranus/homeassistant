@@ -1,0 +1,154 @@
+title: Home Assistant
+views:
+  - path: default_view
+    title: Home
+    badges:
+      - entity: binary_sensor.updater
+      - entity: person.albert
+      - entity: sun.sun
+    cards:
+      - type: entity
+        entity: weather.gismeteo
+        name: Погода
+      - entity: sensor.gismeteo_temperature
+        graph: line
+        name: Температура
+        type: sensor
+      - entity: sensor.gismeteo_humidity
+        graph: line
+        name: Влажность
+        type: sensor
+      - type: entity
+        entity: cover.blind
+        name: Штора
+      - type: entities
+        entities:
+          - name: Влажность в ванной
+            entity: sensor.humidity
+          - name: Температура в ванной
+            entity: sensor.temperature
+          - name: Атмосферное давление
+            entity: sensor.pressure
+          - name: Влажность на балконе
+            entity: sensor.humidity_balcon
+          - name: Температура на балконе
+            entity: sensor.temperature_balcon
+          - name: Освещенность на балконе
+            entity: sensor.lightness
+      - type: entity
+        entity: vacuum.xiaomi_vacuum_cleaner
+      - type: entity
+        entity: fan.relay_t
+        name: Вытяжка в туалете
+      - type: entity
+        entity: fan.relay_v
+        name: Вытяжка в ванной
+      - type: media-control
+        entity: media_player.yandex_station_ff98f02923317431b190dd5a
+#      - entity: media_player.lg_webos_smart_tv
+#        icon: 'mdi:remote-tv'
+#        state_color: true
+#        style:
+#          left: 73%
+#          top: 73%
+#        tap_action:
+#          action: toggle
+#        type: state-icon
+
+ #/config/ui-lovelace.yaml
+  - title: Пылесос
+    icon: mdi:robot-vacuum
+    cards:
+        - type: vertical-stack
+          cards:
+          - type: markdown
+            content: >
+               **Статус**
+        - type: glance
+          columns: 4
+          show_header_toggle: false
+          show_state: false
+          title: Выбрать комнату для уборки
+          entities:
+            - name: Кухня
+              entity: input_boolean.kitchen_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Детская
+              entity: input_boolean.children_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Прихожая
+              entity: input_boolean.hall_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Кладовка
+              entity: input_boolean.store_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Туалет
+              entity: input_boolean.toilet_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Спальня
+              entity: input_boolean.bedroom_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Маленькая комната
+              entity: input_boolean.smallroom_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Ванная
+              entity: input_boolean.bathroom_vacuum
+              icon: 'mdi:check-bold'
+              tap_action:
+                action: toggle
+            - name: Старт
+              entity: input_boolean.start_vacuum_clean_zone
+              icon: 'mdi:power'
+              tap_action:
+                action: toggle
+            - name: Mi Robot
+              entity: vacuum.xiaomi_vacuum_cleaner
+              icon: 'mdi:robot-vacuum'
+              tap_action:
+                action: more-info
+        - type: vertical-stack
+          cards:
+          - type: markdown
+            content: >
+               **Пылесос**
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - entity: vacuum.xiaomi_vacuum_cleaner
+            - entity: sensor.vacuum_status
+            - entity: sensor.vacuum_cleaner_error_sensor
+            - entity: sensor.vacuum_cleaner_battery_level
+            - entity: sensor.vacuum_cleaner_cleaned_area
+            - entity: sensor.vacuum_cleaner_cleaning_time
+        - type: vertical-stack
+          cards:
+          - type: markdown
+            content: >
+               **Обслуживание**
+        - type: entities
+          show_header_toggle: false
+          entities:
+            - entity: sensor.vacuum_cleaner_main_brush_left
+            - entity: sensor.vacuum_cleaner_main_brush_left_percet
+            - entity: sensor.vacuum_cleaner_side_brush_left
+            - entity: sensor.vacuum_cleaner_side_brush_left_percet
+            - entity: sensor.vacuum_cleaner_filter_left
+            - entity: sensor.vacuum_cleaner_filter_left_percet
+            - entity: sensor.vacuum_cleaner_sensor_dirty_left
+            - entity: sensor.vacuum_cleaner_sensor_dirty_left_percet
+            - entity: sensor.vacuum_cleaner_cleaning_count
+

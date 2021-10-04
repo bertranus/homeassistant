@@ -1,0 +1,172 @@
+clean_xiaomi:
+  alias: xiaomi clean action
+  sequence:
+  - service: python_script.xiaomi
+    data_template:
+      input_boolean.kitchen_vacuum: '{{ states.input_boolean.kitchen_vacuum.state
+        }}'
+      input_boolean.children_vacuum: '{{ states.input_boolean.children_vacuum.state
+        }}'
+      input_boolean.hall_vacuum: '{{ states.input_boolean.hall_vacuum.state }}'
+      input_boolean.store_vacuum: '{{ states.input_boolean.store_vacuum.state }}'
+      input_boolean.toilet_vacuum: '{{ states.input_boolean.toilet_vacuum.state }}'
+      input_boolean.bedroom_vacuum: '{{ states.input_boolean.bedroom_vacuum.state
+        }}'
+      input_boolean.smallroom_vacuum: '{{ states.input_boolean.smallroom_vacuum.state
+        }}'
+      input_boolean.bathroom_vacuum: '{{ states.input_boolean.bathroom_vacuum.state
+        }}'
+vacuum_kitchen:
+  alias: Уборка на кухне
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 26
+      - 19
+vacuum_children:
+  alias: Уборка в детской
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 22
+vacuum_hall:
+  alias: Уборка в прихожей
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 20
+      - 21
+    entity_id: vacuum.xiaomi_vacuum_cleaner
+  mode: single
+vacuum_store:
+  alias: Уборка в кладовке
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 17
+vacuum_toilet:
+  alias: Уборка в туалете
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 3
+vacuum_bedroom:
+  alias: Уборка в спальне
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 16
+vacuum_smallroom:
+  alias: Уборка в маленькой комнате
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaneer
+      command: app_segment_clean
+      params:
+      - 25
+      - 27
+    entity_id: vacuum.xiaomi_vacuum_cleaner
+  mode: single
+vacuum_bathroom:
+  alias: Уборка в ванной
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 18
+vacuum_ordinary:
+  alias: Обычная уборка
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 3
+      - 16
+      - 17
+      - 18
+      - 20
+      - 21
+      - 22
+      - 25
+      - 27
+vacuum_mop:
+  alias: Мойка полов
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 17
+      - 16
+      - 19
+      - 20
+      - 25
+      - 26
+      - 27
+
+vacuum_carpets:
+  alias:  Чистка ковров
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_segment_clean
+      params:
+      - 18
+      - 3
+      - 21
+      - 22
+
+vacuum_eject:
+  alias: Очистка мусорного контейнера
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.xiaomi_vacuum_cleaner
+      command: app_goto_target
+      params:
+      - 26000
+      - 23000
+
+  # TTS не зависит от настройки "Режим звука"! и всегда будет произносить фразу
+yandex_tts2:
+  alias: TTS не зависит от настройки "Режим звука"
+  sequence:
+  - service: media_player.play_media
+    entity_id: media_player.yandex_station
+    data:
+      media_content_id: Повторяю вашу фразу
+      media_content_type: text
+
+yandex_command:
+  alias: Выполнить команду
+  sequence:
+  - service: media_player.play_media
+    entity_id: media_player.yandex_station_mini
+    data:
+      media_content_id: Включи мою любимую музыку вперемешку
+      media_content_type: command
