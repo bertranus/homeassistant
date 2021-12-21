@@ -1,0 +1,101 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
+yandex_smart_home: !include yandex_smart_home.yaml
+
+yandex_station:
+  username: !secret yandex_user
+  password: !secret yandex_pass
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 0.0.0.0/0
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+
+telegram_bot:
+  - platform: polling
+    api_key: !secret tgbot_token
+    parse_mode: html
+    allowed_chat_ids:
+      - !secret tg_token
+
+notify:
+  - name: me
+    platform: telegram
+    chat_id: !secret tg_token
+
+weather:
+  - platform: gismeteo
+    mode: daily
+    latitude: !secret latitude
+    longitude: !secret longitude
+#vacuum:
+#  - platform: miio2
+#    host: 192.168.68.105
+#    token: !secret vacuum
+#    name: Mi hihi
+
+mqtt:
+  broker: mqtt
+  port: 1883
+  client_id: home-assistant-1
+  keepalive: 60
+  username: homeassistant
+  password: !secret mqtt_password
+  protocol: 3.1
+  birth_message:
+    topic: "homeassistant/server/LWT"
+    payload: "Online"
+    qos: 1
+    retain: true
+  will_message:
+    topic: "homeassistant/server/LWT"
+    payload: "Offline"
+    qos: 1
+    retain: true
+
+cover:
+  - platform: mqtt
+    name: "Штора"
+    command_topic: "d1-pro-b/command"
+    state_topic: "d1-pro-b/upDownRelay/State"
+    availability_topic: "d1-pro-b/status/LWT"
+    payload_open: 100
+    payload_close: 101
+    payload_stop: 102
+    state_open: 0
+#    state_opening: 0
+    state_closed: 1
+#    state_closing: 1
+    payload_available: "Connected"
+    payload_not_available: "Offline"
+
+fan:
+  - platform: mqtt
+    name: "Вытяжка в туалете"
+    command_topic: "nodemcu-t/command"
+    state_topic: "nodemcu-t/command"
+    payload_on: "101"
+    payload_off: "100"
+    qos: 1
+    retain: true
+  - platform: mqtt
+    name: "Вытяжка в ванной"
+    command_topic: "d1-mini-v/command"
+    state_topic: "d1-mini-v/command"
+    payload_on: "101"
+    payload_off: "100"
+    qos: 1
+    retain: true
