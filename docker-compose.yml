@@ -1,0 +1,157 @@
+
+version: '3.9'
+
+networks:
+  homeassistant:
+    driver: overlay
+
+#volumes:
+#  mqttdata:
+#    driver: local
+#    driver_opts:
+#      type: nfs
+#      o: 127.0.0.1,rw
+#      device: ":/nfs/test"
+
+
+configs:
+  nginx:
+    file: /opt/homeassistant/nginx/conf.d/default.conf
+  ha_secrets:
+    file: /opt/homeassistant/homeassistant/secrets.yaml
+  ha_sensors:
+    file: /opt/homeassistant/homeassistant/sensors.yaml
+secrets:
+  fullchain.pem:
+    file: /opt/homeassistant/certbot/conf/live/${DOMAIN}-0001/fullchain.pem
+#    file: /opt/homeassistant/certs/fullchain.pem
+  privkey.pem:
+    file: /opt/homeassistant/certbot/conf/live/${DOMAIN}-0001/privkey.pem
+#    file: /opt/homeassistant/certs/privkey.pem
+
+services:
+
+  portainer:
+    image: portainer/portainer-ce:${PORTAINER_TAG}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/homeassistant/portainer:/data
+    ports:
+      - "9000:9000"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.HOSTNAME == master]
+      restart_policy:
+        condition: on-failure
+
+  nginx:
+#    networks:
+#      - homeassistant
+    image: nginx:${NG_TAG}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+#      - ./nginx/conf.d :/etc/nginx/conf.d
+      - /opt/homeassistant/nginx/logs:/var/log/nginx
+      - /opt/homeassistant/certbot:/etc/letsencrypt
+      - /opt/homeassistant/certbot/www:/var/www/html
+    configs:
+      - source: nginx
+        target: /etc/nginx/conf.d/default.conf
+    secrets:
+      - fullchain.pem
+      - privkey.pem
+    depends_on:
+      - homeassistant
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.HOSTNAME == master]
+      restart_policy:
+        condition: on-failure
+
+  certbot:
+    image: certbot/certbot:${CERTBOT_TAG}
+    volumes:
+      - /opt/homeassistant/certbot/conf:/etc/letsencrypt
+      - /opt/homeassistant/certbot/www:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www/html --register-unsafely-without-email --agree-tos --no-eff-email -d ${DOMAIN}
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:${HA_TAG}
+#    networks:
+#      - homeassistant
+    volumes:
+      - /opt/homeassistant/homeassistant:/config
+    depends_on:
+#      - postgres
+      - mqtt
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.HOSTNAME == master]
+      restart_policy:
+        condition: on-failure
+
+#  postgres:
+#    image: postgres:${PG_TAG}
+#    networks:
+#      - homeassistant
+#    volumes:
+#      - ./postgres:/var/lib/postgresql/data
+#    environment:
+#      - POSTGRES_USER=${POSTGRES_USER}
+#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#      - POSTGRES_DB=${POSTGRES_DB}
+#      - PGDATA=/var/lib/postgresql/data/pgdata
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints: [node.HOSTNAME == master]
+#      restart_policy:
+#        condition: on-failure
+
+  mqtt:
+    image: eclipse-mosquitto:${MQTT_TAG}
+    volumes:
+      - /opt/homeassistant/mqtt/config:/mosquitto/config
+      - /opt/homeassistant/mqtt/data:/mosquitto/data
+      - /opt/homeassistant/mqtt/log:/mosquitto/log
+#    environment:
+#      - MQTT_BROKER_URL=mqtt://mqtt
+    ports:
+      - "1883:1883"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.HOSTNAME == master]
+      restart_policy:
+        condition: on-failure
+
+#  grafana:
+#    image: grafana/grafana:${GRAFANA_TAG}
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./grafana:/var/lib/grafana
+#    deploy:
+ #     replicas: 1
+  #    placement:
+   #     constraints: [node.HOSTNAME == master]
+    #  restart_policy:
+     #   condition: none
+
+#  prometheus:
+#    image: prom/prometheus:${PROMETHEUS_TAG}
+#    ports:
+#      - "9090:9090"
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints: [node.HOSTNAME == worker]
+#      restart_policy:
+#        condition: none
