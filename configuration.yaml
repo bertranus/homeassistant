@@ -70,8 +70,8 @@ cover:
   - platform: mqtt
     name: "Штора"
     command_topic: "d1-pro-b/command"
-    state_topic: "d1-pro-b/upDownRelay/State"
-    availability_topic: "d1-pro-b/status/LWT"
+    state_topic: "d1-pro-b_6/upDownRelay/State"
+    availability_topic: "d1-pro-b_6/status/LWT"
     payload_open: 100
     payload_close: 101
     payload_stop: 102
